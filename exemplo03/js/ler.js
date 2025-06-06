@@ -15,12 +15,14 @@
 function ler() {
     const produto = document.getElementById('produto').value.trim();
     const preco = document.getElementById('preco').value.trim();
+    const data = document.getElementById('data').value.trim();
 
     document.getElementById('produto').value = "";
     document.getElementById('preco').value = "";
+    document.getElementById('data').value = "";
 
-    if (produto && preco)
-      return { produto, preco };
+    if (produto && preco && data)
+      return { produto, preco, data };
     
     return null;
 }

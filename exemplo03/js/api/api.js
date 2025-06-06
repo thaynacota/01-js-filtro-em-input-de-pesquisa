@@ -1,4 +1,4 @@
-const url = "https://01c72ea2-dc83-4f76-b4e6-f998346028e2-00-1fmk7t8gu8uk4.picard.replit.dev/";
+const url = "https://b20b2dbe-6cab-4beb-b9e1-76afef298e60-00-iwd8udidkxyr.spock.replit.dev:3002/";
 const urlProdutos = url + "produtos";
 
 /*
@@ -57,4 +57,20 @@ export async function buscar() {
     console.error('Erro ao ler dados:', erro);
     throw erro;
   }
+}
+
+export async function remover(id) {
+    return await fetch(`${urlProdutos}/${id}`, {
+        method: 'DELETE'
+    });
+}
+
+export async function atualizar(id, dados) {
+    return await fetch(`${urlProdutos}/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dados)
+    });
 }

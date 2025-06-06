@@ -1,10 +1,14 @@
 import { enviar, buscar } from "./api/api.js";
 import lerDadosDoFormulario from "./ler.js";
 import imprimirDadosDaLista from "./imprimir.js";
+import excluirItem from "./excluir.js";
+import editarItem from "./editar.js";
 
 const produto = document.getElementById("produto");
 const preco = document.getElementById("preco");
+const data_validade = document.getElementById("data");
 const botao = document.getElementById("botaoEnviar");
+let idEditando = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
     const vetor = await buscar();
@@ -24,12 +28,20 @@ botao.addEventListener('keydown', (event) => {
 
 async function adicionar() {
     const dados = lerDadosDoFormulario();
-    if (dados) {
-        await enviar(dados);
-        let vetor = await buscar();
-        atualizarLista(vetor);
-    } else
+    if (!dados) {
         alert("Dados não enviados!");
+        return;
+    } 
+
+    if (idEditando) {
+        await atualizar(idEditando, dados);
+        idEditando = null;
+    } else {
+        await enviar(dados);
+    }
+
+    const vetor = await buscar();
+    atualizarLista(vetor);
 }
 
 function atualizarLista(vetor) {
@@ -38,10 +50,27 @@ function atualizarLista(vetor) {
 
     vetor.forEach(elemento => {
         const li = document.createElement('li');
-        li.innerHTML = imprimirDadosDaLista(elemento)
+        li.innerHTML = imprimirDadosDaLista(elemento);
+
+        const botaoEditar = document.createElement('button');
+        botaoEditar.textContent = "Editar";
+        botaoEditar.onclick = () => editarItem(elemento);
+
+        const botaoExcluir = document.createElement('button');
+        botaoExcluir.textContent = "Excluir";
+        botaoExcluir.onclick = async () => {
+            await remover(elemento.id);
+            const novaLista = await buscar();
+            atualizarLista(novaLista);
+        };
+
+        li.appendChild(botaoEditar);
+        li.appendChild(botaoExcluir);
+
         lista.appendChild(li);
     });
 }
+
 
 produto.onkeyup = () => {
     var termo = produto.value.toLowerCase();
